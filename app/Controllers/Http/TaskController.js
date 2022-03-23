@@ -5,6 +5,14 @@ const Task = use('App/Models/Task')
 const AuthService = use('App/Services/AuthService')
 
 class TaskController {
+    async index({ auth, request, params }) {
+        const user = await auth.getUser()
+        const { id } = params
+        const project = await Project.find(id)
+        AuthService.checkPermission(project, user)
+        return await project.tasks().fetch()
+    }
+
     async create({ auth, request, params }) {
         const user = await auth.getUser()
         const { description } = request.all()
